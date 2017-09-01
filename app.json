@@ -1,0 +1,18 @@
+{
+  "name": "provide",
+  "scripts": {
+  },
+  "formation": {
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/ruby"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-xvfb-google-chrome"
+    },
+  ]
+}
