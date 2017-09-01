@@ -15,11 +15,14 @@ gem "rails", "~> 5.1.3"
 gem "sass-rails", "~> 5.0"
 gem "turbolinks", "~> 5"
 gem "uglifier", ">= 1.3.0"
+gem "watir"
 
 group :development, :test do
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem "pry-rails", "~> 0.3.4"
   gem "capybara", "~> 2.13"
   gem "selenium-webdriver"
+  gem "chromedriver-helper"
 end
 
 group :development do
