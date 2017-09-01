@@ -1,3 +1,5 @@
+require "selenium-webdriver"
+
 Rails.application.configure do
   Selenium::WebDriver::Chrome.driver_path="/app/.apt/usr/bin/google-chrome"
   # Settings specified here will take precedence over those in config/application.rb.
