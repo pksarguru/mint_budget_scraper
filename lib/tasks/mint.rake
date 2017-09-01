@@ -1,7 +1,7 @@
 namespace :mint do
   desc "TODO"
   task budget_scraper: :environment do
-    browser = Watir::Browser.new
+    browser = Watir::Browser.new :chrome
     browser.goto("https://mint.intuit.com/planning.event")
     browser.input(name: "Email").send_keys("pavan.sarguru@gmail.com")
     browser.input(name: "Password").send_keys("D1rkusC1rcus9841!")

@@ -1,7 +1,8 @@
 require "selenium-webdriver"
 
 Rails.application.configure do
-  Selenium::WebDriver::Chrome.driver_path="/app/.apt/usr/bin/google-chrome"
+  chromedriver_path = File.join(File.absolute_path('../..', File.dirname(__FILE__)),"browsers","chromedriver.exe")
+  Selenium::WebDriver::Chrome.driver_path = chromedriver_path
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
