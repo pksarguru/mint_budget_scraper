@@ -1,12 +1,13 @@
 {
   "stack": "cedar-14",
-  "name": "provide",
+  "name": "Google chrome on heroku scraping mint.com",
   "scripts": {
   },
   "env": {
     "USERNAME":{
       "required": true
     },
+
     "PW":{
       "required": true
     },
@@ -20,11 +21,13 @@
     {
       "url": "heroku/ruby"
     },
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-xvfb-google-chrome"
-    },
+
     {
       "url": "https://github.com/heroku/heroku-buildpack-chromedriver"
+    },
+
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-xvfb-google-chrome"
     },
   ]
 }
