@@ -3,6 +3,14 @@
   "name": "provide",
   "scripts": {
   },
+  "env": {
+    "USERNAME":{
+      "required": true
+    },
+    "PW":{
+      "required": true
+    },
+  },
   "formation": {
   },
   "addons": [
