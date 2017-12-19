@@ -23,7 +23,7 @@ namespace :mint do
 
       send_sign_in_text
 
-      browser.wait_until(15) {
+      browser.wait_until {
         AccessCode.last.created_at > start_task_time
       }
 
@@ -32,7 +32,7 @@ namespace :mint do
     end
 
     # binding.pry
-    browser.wait_until(30) {
+    browser.wait_until {
       browser.span(text: "Refreshing your accounts, this shouldn\'t take more than a couple minutes.").present? == false
     }
 
@@ -43,9 +43,6 @@ namespace :mint do
     spent = array[2].text.delete(",").to_f - 2000
 
     budget = array[3].text.delete(",").to_f - 2000
-
-    p "*****************"
-    puts spent/budget
 
     current_day = Date.today.day
     days_in_month = Date.today.end_of_month.day
@@ -69,6 +66,12 @@ namespace :mint do
     client.api.account.messages.create(
       from: ENV.fetch("TWILIO_PHONE_NUMBER"),
       to: ENV.fetch("PAVAN_PHONE_NUMBER"),
+      body: message
+    )
+
+    client.api.account.messages.create(
+      from: ENV.fetch("TWILIO_PHONE_NUMBER"),
+      to: ENV.fetch("SHILPY_PHONE_NUMBER"),
       body: message
     )
   end
@@ -118,5 +121,9 @@ namespace :mint do
 
     # make the browser
     Watir::Browser.new :chrome, options: options
+  end
+
+  def number_to_currency(number)
+    "$#{number.round(2)}"
   end
 end
