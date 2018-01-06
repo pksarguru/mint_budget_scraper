@@ -103,7 +103,6 @@ namespace :mint do
     # but not on heroku.
     if chrome_bin = ENV["GOOGLE_CHROME_BIN"]
       options.add_argument "no-sandbox"
-      options.detach = true
       options.binary = chrome_bin
       # give a hint to here too
       Selenium::WebDriver::Chrome.driver_path = \
