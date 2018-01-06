@@ -1,6 +1,7 @@
 namespace :mint do
   desc "TODO"
   task budget_scraper: :environment do
+    puts 'running now'
     start_task_time = DateTime.now
 
     browser = new_browser
@@ -37,6 +38,8 @@ namespace :mint do
     }
 
     a = browser.spans
+
+    puts 'calculating'
 
     array = a.select { |span| span.class_name == "amount" && !span.text.blank?}
 
