@@ -24,7 +24,7 @@ namespace :mint do
 
       send_sign_in_text
 
-      browser.wait_until {
+      browser.wait_until(interval: 60, timeout: 3600) {
         AccessCode.last.created_at > start_task_time
       }
 
@@ -32,8 +32,7 @@ namespace :mint do
       browser.input(id: "ius-mfa-otp-submit-btn").click
     end
 
-    # binding.pry
-    browser.wait_until {
+    browser.wait_until(timeout: 300) {
       browser.span(text: "Refreshing your accounts, this shouldn\'t take more than a couple minutes.").present? == false
     }
 
@@ -41,7 +40,7 @@ namespace :mint do
 
     puts 'calculating'
 
-    array = a.select { |span| span.class_name == "amount" && !span.text.blank?}
+    array = a.select { |span| span&.class_name == "amount" && !span&.text&.blank?}
 
     spent = array[2].text.delete(",").to_f - 2000
 

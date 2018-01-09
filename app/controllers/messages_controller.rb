@@ -7,6 +7,6 @@ class MessagesController < ApplicationController
 
     AccessCode.create(body: message_body)
 
-    render plain: "OK"
+    render plain: "Thanks!"
   end
 end
