@@ -29,5 +29,8 @@
     {
       "url": "https://github.com/heroku/heroku-buildpack-xvfb-google-chrome"
     },
-  ]
+  ],
+  "scripts": {
+    "postdeploy": "chromedriver-update 2.36"
+  }
 }
