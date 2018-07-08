@@ -1,64 +1,68 @@
 namespace :mint do
   desc "TODO"
   task budget_scraper: :environment do
-    puts 'running now'
-    start_task_time = DateTime.now
+    begin
+      puts 'running now'
+      start_task_time = DateTime.now
 
-    browser = new_browser
-    browser.goto("https://mint.intuit.com/planning.event")
+      browser = new_browser
+      browser.goto("https://mint.intuit.com/planning.event")
 
-    browser.input(name: "Email").to_subtype.clear
-    browser.input(name: "Password").to_subtype.clear
+      browser.input(name: "Email").to_subtype.clear
+      browser.input(name: "Password").to_subtype.clear
 
-    browser.input(name: "Email").send_keys(ENV.fetch("USERNAME"))
-    browser.input(name: "Password").send_keys(ENV.fetch("PW"))
-    browser.button(name: "SignIn").click
+      browser.input(name: "Email").send_keys(ENV.fetch("USERNAME"))
+      browser.input(name: "Password").send_keys(ENV.fetch("PW"))
+      browser.button(name: "SignIn").click
 
-    browser.wait_until {
-      browser.a(id: "add-budget").present? ||
-      browser.text.include?("Let's make sure it's you")
-    }
-
-    if browser.text.include?("Let's make sure it's you")
-      browser.button(text: "Continue").click
-
-      send_sign_in_text
-
-      browser.wait_until(interval: 60, timeout: 3600) {
-        AccessCode.last.created_at > start_task_time
+      browser.wait_until {
+        browser.a(id: "add-budget").present? ||
+        browser.text.include?("Let's make sure it's you")
       }
 
-      browser.input(id: "ius-mfa-confirm-code").send_keys(AccessCode.last.body)
-      browser.input(id: "ius-mfa-otp-submit-btn").click
-    end
+      if browser.text.include?("Let's make sure it's you")
+        browser.button(text: "Continue").click
 
-    browser.wait_until(timeout: 300) {
-      browser.span(text: "Refreshing your accounts, this shouldn\'t take more than a couple minutes.").present? == false
-    }
+        send_sign_in_text
 
-    a = browser.spans
+        browser.wait_until(interval: 60, timeout: 3600, message: "Mint code not given in time") {
+          AccessCode.last.created_at > start_task_time
+        }
 
-    puts 'calculating'
+        browser.input(id: "ius-mfa-confirm-code").send_keys(AccessCode.last.body)
+        browser.input(id: "ius-mfa-otp-submit-btn").click
+      end
 
-    array = a.select { |span| span&.class_name == "amount" && !span&.text&.blank?}
+      browser.wait_until(timeout: 600, message: "Mint did not refresh in time") {
+        browser.span(text: "Refreshing your accounts, this shouldn\'t take more than a couple minutes.").present? == false
+      }
 
-    spent = array[2].text.delete(",").to_f - 2000
+      a = browser.spans
 
-    budget = array[3].text.delete(",").to_f - 2000
+      puts 'calculating'
 
-    current_day = Date.today.day
-    days_in_month = Date.today.end_of_month.day
+      array = a.select { |span| span&.class_name == "amount" && !span&.text&.blank?}
 
-    month_progress = current_day.to_f/days_in_month.to_f
+      spent = array[2].text.delete(",").to_f - 2000
 
-    budget_target = month_progress * budget
+      budget = array[3].text.delete(",").to_f - 2000
 
-    budget_status = budget_target - spent
+      current_day = Date.today.day
+      days_in_month = Date.today.end_of_month.day
 
-    if budget_status > 0
-      send_status_text("You're currently under the target budget by #{number_to_currency(budget_status)}")
-    else
-      send_status_text("You're currently over the target budget by #{number_to_currency(budget_status.abs)}")
+      month_progress = current_day.to_f/days_in_month.to_f
+
+      budget_target = month_progress * budget
+
+      budget_status = budget_target - spent
+
+      if budget_status > 0
+        send_status_text("You're currently under the target budget by #{number_to_currency(budget_status)}")
+      else
+        send_status_text("You're currently over the target budget by #{number_to_currency(budget_status.abs)}")
+      end
+    rescue TimeoutError
+      send_text("There has been a timeout error")
     end
   end
 
@@ -85,6 +89,16 @@ namespace :mint do
       from: ENV.fetch("TWILIO_PHONE_NUMBER"),
       to: ENV.fetch("PAVAN_PHONE_NUMBER"),
       body: "Reply with sign in code"
+    )
+  end
+
+  def send_text(message)
+    client = Twilio::REST::Client.new
+
+    client.api.account.messages.create(
+      from: ENV.fetch("TWILIO_PHONE_NUMBER"),
+      to: ENV.fetch("PAVAN_PHONE_NUMBER"),
+      body: "#{message}"
     )
   end
 
