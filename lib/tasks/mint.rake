@@ -2,7 +2,7 @@ namespace :mint do
   desc "TODO"
   task budget_scraper: :environment do
     begin
-      puts 'running now'
+      puts 'running now!'
       start_task_time = DateTime.now
 
       browser = new_browser
